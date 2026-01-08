@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatPublic</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --lime:#32ff32;
+  --pink:#b6ff00;
+  --glass:rgba(255,255,255,.08);
+  --glass-heavy:rgba(0,0,0,.7);
+  --bg-dark:#050505;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;height:100vh;
+  font-family:'Outfit',sans-serif;
+  background:#050505;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+/* ===== MUSIC ===== */
+#musicModal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+.music-card{
+  background:#000;
+  border:1px solid var(--lime);
+  border-radius:30px;
+  padding:25px;
+  width:80%;
+  max-width:300px;
+  text-align:center;
+}
+.song-option{
+  padding:12px;
+  margin:8px 0;
+  border-radius:15px;
+  background:rgba(255,255,255,.05);
+  cursor:pointer;
+}
+.song-option.active{background:var(--lime);color:#000}
+
+/* ===== LOGIN ===== */
+#loginModal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.9);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+.modal{
+  background:#000;
+  padding:30px;
+  border-radius:30px;
+  width:85%;
+  max-width:340px;
+  text-align:center;
+}
+.modal input{
+  width:100%;
+  margin:10px 0;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+}
+.modal button{
+  width:100%;
+  padding:14px;
+  border-radius:20px;
+  background:var(--lime);
+  font-weight:700;
+}
+.toggle{margin-top:10px;font-size:12px;color:var(--pink);cursor:pointer}
+
+/* ===== CHAT ===== */
+.chat-container{
+  width:95%;
+  max-width:420px;
+  height:92vh;
+  background:var(--glass-heavy);
+  border-radius:50px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.header{
+  padding:25px;
+  text-align:center;
+}
+.header-title{
+  font-family:'Syncopate';
+  font-size:.8rem;
+  color:var(--lime);
+  letter-spacing:3px;
+}
+.profile{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+.profile img{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--lime);
+}
+.status{font-size:10px;color:var(--pink)}
+
+.music-bar{margin-top:10px}
+.music-bar button{
+  font-size:10px;
+  padding:6px 12px;
+  border-radius:20px;
+  background:transparent;
+  border:1px solid var(--lime);
+  color:var(--lime);
+}
+
+/* ===== MESSAGES ===== */
+#chatBox{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+}
+.msg{
+  max-width:80%;
+  padding:12px 16px;
+  border-radius:20px;
+}
+.mine{align-self:flex-end;background:var(--lime);color:#000}
+.others{align-self:flex-start;background:rgba(255,255,255,.1)}
+.user-label{
+  font-size:9px;
+  color:var(--pink);
+  font-weight:700;
+  display:block;
+}
+
+/* ===== INPUT ===== */
+.input-area{
+  display:flex;
+  padding:15px;
+  gap:10px;
+}
+#msgInput{
+  flex:1;
+  padding:12px 18px;
+  border-radius:30px;
+  border:none;
+}
+.send-btn{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  border:none;
+  background:var(--lime);
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop></audio>
+
+<!-- MUSIC -->
+<div id="musicModal">
+  <div class="music-card">
+    <div class="song-option" onclick="selectSong('https://j.top4top.io/m_3647bwc821.mp3',this)">Losing us</div>
+    <div class="song-option" onclick="selectSong('https://c.top4top.io/m_3647td0he1.mp3',this)">Nembus jantung</div>
+    <div class="song-option" onclick="selectSong('https://a.top4top.io/m_3647jxzr81.m4a',this)">Multo cikk</div>
+    <div style="margin-top:10px;cursor:pointer" onclick="toggleMusic()">[ CLOSE ]</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginModal">
+  <div class="modal">
+    <h3 id="modeTitle">LOGIN</h3>
+    <input id="username" placeholder="Username (register)">
+    <input id="photoURL" placeholder="Photo URL (optional)">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="submitAuth()">SUBMIT</button>
+    <div class="toggle" onclick="toggleMode()">Switch Login / Register</div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="chat-container">
+  <div class="header">
+    <div class="header-title">SYSTEM.MAIN CHAT</div>
+    <div class="profile">
+      <img id="avatar" src="">
+      <div class="status" id="statusText">offline</div>
+    </div>
+    <div class="music-bar">
+      <button onclick="toggleMusic()">MUSIC</button>
+      <button onclick="playMusic()">PLAY</button>
+      <button onclick="stopMusic()">OFF</button>
+    </div>
+  </div>
+
+  <div id="chatBox"></div>
+
+  <form class="input-area" onsubmit="sendMsg(event)">
+    <input id="msgInput" placeholder="Type message...">
+    <button class="send-btn">➤</button>
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, onDisconnect, set, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+/* === FIREBASE CONFIG LU === */
+const firebaseConfig = {
+  apiKey: "AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
+  authDomain: "public-chat-ece29.firebaseapp.com",
+  databaseURL: "https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "public-chat-ece29",
+  storageBucket: "public-chat-ece29.firebasestorage.app",
+  messagingSenderId: "66709279866",
+  appId: "1:66709279866:web:9975c848443615310757c3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let myName="", myPhoto="", myUid="";
+let isLogin=true;
+
+/* ===== MUSIC ===== */
+const audio=document.getElementById("bgMusic");
+window.toggleMusic=()=>musicModal.style.display=musicModal.style.display==="flex"?"none":"flex";
+window.selectSong=(u,e)=>{audio.src=u;audio.play();document.querySelectorAll(".song-option").forEach(x=>x.classList.remove("active"));e.classList.add("active");toggleMusic();}
+window.playMusic=()=>audio.play();
+window.stopMusic=()=>audio.pause();
+
+/* ===== AUTH ===== */
+window.toggleMode=()=>{
+  isLogin=!isLogin;
+  modeTitle.innerText=isLogin?"LOGIN":"REGISTER";
+}
+
+window.submitAuth=async()=>{
+  try{
+    if(isLogin){
+      const r=await signInWithEmailAndPassword(auth,email.value,password.value);
+      if(!r.user.emailVerified) return alert("Verifikasi email dulu");
+    }else{
+      const r=await createUserWithEmailAndPassword(auth,email.value,password.value);
+      await updateProfile(r.user,{
+        displayName:username.value,
+        photoURL:photoURL.value || "https://i.ibb.co/7G4QY4f/user.png"
+      });
+      await sendEmailVerification(r.user);
+      alert("Verifikasi email dikirim");
+    }
+  }catch(e){alert(e.message)}
+}
+
+onAuthStateChanged(auth,u=>{
+  if(u && u.emailVerified){
+    myUid=u.uid;
+    myName=u.displayName;
+    myPhoto=u.photoURL;
+    avatar.src=myPhoto;
+    loginModal.style.display="none";
+
+    const userRef=ref(db,"users/"+myUid);
+    set(userRef,{name:myName,online:true});
+    onDisconnect(userRef).remove();
+    statusText.innerText="online";
+  }
+});
+
+/* ===== CHAT ===== */
+window.sendMsg=e=>{
+  e.preventDefault();
+  if(!msgInput.value)return;
+  push(ref(db,"messages"),{
+    user:myName,
+    photo:myPhoto,
+    text:msgInput.value,
+    time:Date.now()
+  });
+  msgInput.value="";
+};
+
+onChildAdded(ref(db,"messages"),s=>{
+  const d=s.val();
+  const div=document.createElement("div");
+  div.className="msg "+(d.user===myName?"mine":"others");
+  div.innerHTML=`<span class="user-label">${d.user}</span>${d.text}`;
+  chatBox.appendChild(div);
+  chatBox.scrollTop=chatBox.scrollHeight;
+
+  // AUTO DELETE 24 JAM
+  if(Date.now()-d.time>86400000) remove(s.ref);
+});
+</script>
+
+</body>
+</html>
