@@ -11,7 +11,6 @@
 :root{
   --lime:#32ff32;
   --pink:#b6ff00;
-  --glass:rgba(255,255,255,.08);
   --glass-heavy:rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
@@ -23,9 +22,27 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
+  overflow:hidden;
 }
 
-/* ===== MUSIC ===== */
+/* POPUP */
+#popup{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#000;
+  border:1px solid var(--lime);
+  padding:12px 20px;
+  border-radius:20px;
+  font-size:12px;
+  display:none;
+  z-index:9999;
+}
+#popup.error{border-color:red;color:red}
+#popup.success{border-color:var(--lime);color:var(--lime)}
+
+/* MUSIC */
 #musicModal{
   position:fixed;inset:0;
   background:rgba(0,0,0,.85);
@@ -37,13 +54,14 @@ body{
 .music-card{
   background:#000;
   border:1px solid var(--lime);
-  border-radius:25px;
+  border-radius:30px;
   padding:25px;
-  width:280px;
+  width:80%;
+  max-width:300px;
   text-align:center;
 }
 .song-option{
-  padding:10px;
+  padding:12px;
   margin:8px 0;
   border-radius:15px;
   background:rgba(255,255,255,.05);
@@ -51,7 +69,7 @@ body{
 }
 .song-option.active{background:var(--lime);color:#000}
 
-/* ===== LOGIN ===== */
+/* LOGIN */
 #loginModal{
   position:fixed;inset:0;
   background:rgba(0,0,0,.9);
@@ -62,46 +80,46 @@ body{
 }
 .modal{
   background:#000;
-  padding:25px;
-  border-radius:25px;
+  padding:30px;
+  border-radius:30px;
   width:85%;
-  max-width:330px;
+  max-width:340px;
   text-align:center;
 }
 .modal input{
   width:100%;
-  margin:8px 0;
-  padding:12px;
-  border-radius:18px;
+  margin:10px 0;
+  padding:14px;
+  border-radius:20px;
   border:none;
 }
 .modal button{
   width:100%;
-  padding:12px;
-  border-radius:18px;
+  padding:14px;
+  border-radius:20px;
   background:var(--lime);
   font-weight:700;
 }
 .toggle{margin-top:10px;font-size:12px;color:var(--pink);cursor:pointer}
 
-/* ===== CHAT ===== */
+/* CHAT */
 .chat-container{
   width:95%;
   max-width:420px;
   height:92vh;
   background:var(--glass-heavy);
-  border-radius:40px;
+  border-radius:50px;
   display:flex;
   flex-direction:column;
   overflow:hidden;
 }
 .header{
-  padding:20px;
+  padding:25px;
   text-align:center;
 }
 .header-title{
   font-family:'Syncopate';
-  font-size:.75rem;
+  font-size:.8rem;
   color:var(--lime);
 }
 .profile{
@@ -112,7 +130,8 @@ body{
   margin-top:10px;
 }
 .profile img{
-  width:34px;height:34px;
+  width:32px;
+  height:32px;
   border-radius:50%;
   border:1px solid var(--lime);
 }
@@ -125,69 +144,55 @@ body{
   background:transparent;
   border:1px solid var(--lime);
   color:var(--lime);
-  margin:4px;
 }
 
-/* ===== MESSAGES ===== */
 #chatBox{
   flex:1;
   overflow-y:auto;
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  padding:20px;
 }
+
 .msg-wrap{
   display:flex;
   gap:8px;
-  align-items:flex-end;
+  margin-bottom:10px;
 }
 .msg-wrap.mine{flex-direction:row-reverse}
-.msg-wrap img{
-  width:28px;height:28px;border-radius:50%;
-}
+
 .msg{
   max-width:75%;
   padding:10px 14px;
-  border-radius:16px;
-  font-size:14px;
+  border-radius:20px;
 }
-.mine .msg{
-  background:var(--lime);
-  color:#000;
-  border-bottom-right-radius:4px;
+.mine .msg{background:var(--lime);color:#000}
+.others .msg{background:rgba(255,255,255,.1)}
+
+.avatar{
+  width:28px;
+  height:28px;
+  border-radius:50%;
 }
-.others .msg{
-  background:rgba(255,255,255,.12);
-  border-bottom-left-radius:4px;
-}
+
 .user-label{
   font-size:9px;
   color:var(--pink);
-  font-weight:600;
+  font-weight:700;
 }
 .time{
   font-size:9px;
-  opacity:.6;
-  text-align:right;
-}
-.reply{
-  font-size:10px;
-  opacity:.7;
-  border-left:2px solid var(--pink);
-  padding-left:6px;
-  margin-bottom:4px;
-}
-.check{
-  font-size:10px;
-  margin-left:6px;
-  opacity:.7;
+  opacity:.5;
 }
 
-/* ===== INPUT ===== */
+#typing{
+  font-size:10px;
+  color:var(--pink);
+  padding-left:20px;
+}
+
+/* INPUT */
 .input-area{
   display:flex;
-  padding:12px;
+  padding:15px;
   gap:10px;
 }
 #msgInput{
@@ -197,15 +202,11 @@ body{
   border:none;
 }
 .send-btn{
-  width:45px;height:45px;
+  width:45px;
+  height:45px;
   border-radius:50%;
   border:none;
   background:var(--lime);
-}
-.typing{
-  font-size:10px;
-  text-align:center;
-  opacity:.6;
 }
 </style>
 </head>
@@ -213,6 +214,7 @@ body{
 <body>
 
 <audio id="bgMusic" loop></audio>
+<div id="popup"></div>
 
 <!-- MUSIC -->
 <div id="musicModal">
@@ -220,7 +222,7 @@ body{
     <div class="song-option" onclick="selectSong('https://j.top4top.io/m_3647bwc821.mp3',this)">Losing us</div>
     <div class="song-option" onclick="selectSong('https://c.top4top.io/m_3647td0he1.mp3',this)">Nembus jantung</div>
     <div class="song-option" onclick="selectSong('https://a.top4top.io/m_3647jxzr81.m4a',this)">Multo cikk</div>
-    <div style="margin-top:10px;cursor:pointer" onclick="toggleMusic()">[ CLOSE ]</div>
+    <div onclick="toggleMusic()">[ CLOSE ]</div>
   </div>
 </div>
 
@@ -253,29 +255,50 @@ body{
   </div>
 
   <div id="chatBox"></div>
-  <div class="typing" id="typingText"></div>
+  <div id="typing"></div>
 
   <form class="input-area" onsubmit="sendMsg(event)">
-    <input id="msgInput" placeholder="Type message...">
+    <input id="msgInput" placeholder="Type message..." oninput="typingNow()">
     <button class="send-btn">➤</button>
   </form>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, onValue, onDisconnect, set, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, push, onChildAdded, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import {
+  getAuth,createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,sendEmailVerification,
+  updateProfile,onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-const firebaseConfig = { /* CONFIG LU TETAP */ };
+const firebaseConfig={
+  apiKey:"AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
+  authDomain:"public-chat-ece29.firebaseapp.com",
+  databaseURL:"https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"public-chat-ece29",
+  storageBucket:"public-chat-ece29.firebasestorage.app",
+  messagingSenderId:"66709279866",
+  appId:"1:66709279866:web:9975c848443615310757c3"
+};
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const auth=getAuth(app);
 
-let myName="", myPhoto="", myUid="", isLogin=true, replyData=null;
-const audio=document.getElementById("bgMusic");
+let myName="",myPhoto="",myUid="",isLogin=true;
+
+/* POPUP */
+const popup=(t,e="success")=>{
+  popupBox.className=e;
+  popupBox.innerText=t;
+  popupBox.style.display="block";
+  setTimeout(()=>popupBox.style.display="none",3000);
+}
+const popupBox=document.getElementById("popup");
 
 /* MUSIC */
+const audio=document.getElementById("bgMusic");
 window.toggleMusic=()=>musicModal.style.display=musicModal.style.display==="flex"?"none":"flex";
 window.selectSong=(u,e)=>{audio.src=u;audio.play();document.querySelectorAll(".song-option").forEach(x=>x.classList.remove("active"));e.classList.add("active");toggleMusic();}
 window.playMusic=()=>audio.play();
@@ -288,39 +311,29 @@ window.submitAuth=async()=>{
   try{
     if(isLogin){
       const r=await signInWithEmailAndPassword(auth,email.value,password.value);
-      if(!r.user.emailVerified) return alert("Verifikasi email dulu");
+      if(!r.user.emailVerified)return popup("Verifikasi email dulu","error");
+      popup("Login berhasil");
     }else{
       const r=await createUserWithEmailAndPassword(auth,email.value,password.value);
-      await updateProfile(r.user,{
-        displayName:username.value,
-        photoURL:photoURL.value||"https://i.ibb.co/7G4QY4f/user.png"
-      });
+      await updateProfile(r.user,{displayName:username.value,photoURL:photoURL.value||"https://i.ibb.co/7G4QY4f/user.png"});
       await sendEmailVerification(r.user);
-      alert("Verifikasi email dikirim");
+      popup("Register sukses, cek email");
     }
-  }catch(e){alert(e.message)}
+  }catch(e){popup(e.message,"error")}
 }
 
 onAuthStateChanged(auth,u=>{
-  if(u&&u.emailVerified){
-    myUid=u.uid;myName=u.displayName;myPhoto=u.photoURL;
+  if(u && u.emailVerified){
+    myUid=u.uid;
+    myName=u.displayName;
+    myPhoto=u.photoURL;
     avatar.src=myPhoto;
-    loginModal.style.display="none";
-    set(ref(db,"users/"+myUid),{name:myName,online:true,typing:false});
-    onDisconnect(ref(db,"users/"+myUid)).remove();
     statusText.innerText="online";
+    loginModal.style.display="none";
+    const userRef=ref(db,"users/"+myUid);
+    set(userRef,{name:myName,typing:false});
+    onDisconnect(userRef).remove();
   }
-});
-
-/* TYPING */
-msgInput.oninput=()=>update(ref(db,"users/"+myUid),{typing:msgInput.value.length>0});
-onValue(ref(db,"users"),s=>{
-  let t="";
-  s.forEach(c=>{
-    const u=c.val();
-    if(u.typing&&u.name!==myName) t=u.name+" sedang mengetik...";
-  });
-  typingText.innerText=t;
 });
 
 /* CHAT */
@@ -328,31 +341,36 @@ window.sendMsg=e=>{
   e.preventDefault();
   if(!msgInput.value)return;
   push(ref(db,"messages"),{
-    user:myName,photo:myPhoto,text:msgInput.value,time:Date.now(),reply:replyData,read:false
+    user:myName,
+    photo:myPhoto,
+    text:msgInput.value,
+    time:Date.now()
   });
-  replyData=null;
   msgInput.value="";
-};
+}
 
 onChildAdded(ref(db,"messages"),s=>{
   const d=s.val();
+  const t=new Date(d.time).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
   const wrap=document.createElement("div");
   wrap.className="msg-wrap "+(d.user===myName?"mine":"others");
-  const t=new Date(d.time).toLocaleTimeString("id-ID",{hour:'2-digit',minute:'2-digit'});
-  wrap.onclick=()=>replyData=d.text;
   wrap.innerHTML=`
-    <img src="${d.photo}">
-    <div>
-      ${d.reply?`<div class="reply">${d.reply}</div>`:""}
+    <img class="avatar" src="${d.photo}">
+    <div class="msg">
       <div class="user-label">${d.user}</div>
-      <div class="msg">${d.text}</div>
-      <div class="time">${t}<span class="check">${d.user===myName?(d.read?"✔✔":"✔"):""}</span></div>
+      ${d.text}
+      <div class="time">${t}</div>
     </div>`;
   chatBox.appendChild(wrap);
   chatBox.scrollTop=chatBox.scrollHeight;
-  if(d.user!==myName) update(s.ref,{read:true});
-  if(Date.now()-d.time>86400000) remove(s.ref);
 });
+
+let typingTimeout;
+window.typingNow=()=>{
+  set(ref(db,"typing/"+myUid),myName);
+  clearTimeout(typingTimeout);
+  typingTimeout=setTimeout(()=>set(ref(db,"typing/"+myUid),null),1000);
+}
 </script>
 
 </body>
