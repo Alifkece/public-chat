@@ -12,105 +12,125 @@
   --lime:#32ff32;
   --pink:#b6ff00;
   --glass:rgba(255,255,255,.08);
-  --glass-heavy:rgba(0,0,0,.75);
-  --bg:#050505;
+  --dark:rgba(0,0,0,.65);
 }
 *{box-sizing:border-box}
+
 body{
-  margin:0;height:100vh;
+  margin:0;
+  height:100vh;
   font-family:'Outfit',sans-serif;
   background:#000;
   color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  overflow:hidden;
 }
 
-/* LOGIN */
+/* ===== VIDEO BG ===== */
+video.bg{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:-2;
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:-1;
+}
+
+/* ===== LOGIN ===== */
 #loginModal{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.9);
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
   display:flex;
   justify-content:center;
   align-items:center;
-  z-index:999;
+  z-index:1000;
 }
-.modal{
-  width:90%;max-width:360px;
+.login-card{
+  width:90%;
+  max-width:360px;
   background:#000;
   border:1px solid var(--lime);
   border-radius:30px;
-  padding:30px;
+  padding:25px;
   text-align:center;
 }
-.modal h2{
-  font-family:'Syncopate';
+.login-card h3{
+  font-family:Syncopate;
   color:var(--lime);
-  margin-bottom:20px;
+  margin-bottom:15px;
 }
-.modal input{
+.login-card input{
   width:100%;
   padding:14px;
+  border-radius:20px;
+  border:none;
   margin:8px 0;
-  border-radius:20px;
-  border:none;
 }
-.modal button{
+.login-card button{
   width:100%;
   padding:14px;
   border-radius:20px;
-  border:none;
   background:var(--lime);
   font-weight:700;
   margin-top:10px;
 }
-.toggle{
-  margin-top:10px;
+.switch{
   font-size:12px;
+  margin-top:10px;
   color:var(--pink);
   cursor:pointer;
 }
 
-/* CHAT */
+/* ===== CHAT ===== */
 .chat-container{
   width:95%;
   max-width:420px;
   height:92vh;
-  background:var(--glass-heavy);
-  border-radius:45px;
+  margin:auto;
+  margin-top:4vh;
+  background:var(--dark);
+  border-radius:40px;
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  background-image:url('https://files.catbox.moe/ggndeb.jpg');
-  background-size:cover;
-  background-position:center;
 }
+
+/* HEADER */
 .header{
-  padding:22px;
+  padding:20px;
   text-align:center;
-  backdrop-filter:blur(6px);
 }
 .header-title{
-  font-family:'Syncopate';
+  font-family:Syncopate;
   font-size:.8rem;
   color:var(--lime);
+  letter-spacing:3px;
 }
 .profile{
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   gap:10px;
   margin-top:10px;
 }
 .profile img{
-  width:34px;height:34px;
+  width:36px;
+  height:36px;
   border-radius:50%;
   border:1px solid var(--lime);
 }
 .status{
-  font-size:10px;
+  font-size:11px;
   color:var(--pink);
 }
+
+/* MUSIC */
 .music-bar{
   margin-top:10px;
 }
@@ -118,44 +138,50 @@ body{
   font-size:10px;
   padding:6px 12px;
   border-radius:20px;
-  border:1px solid var(--lime);
   background:transparent;
+  border:1px solid var(--lime);
   color:var(--lime);
 }
 
 /* CHAT BOX */
 #chatBox{
   flex:1;
-  padding:20px;
+  padding:15px;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
   gap:10px;
 }
 .msg{
-  max-width:80%;
-  padding:12px 16px;
-  border-radius:18px;
-  backdrop-filter:blur(4px);
+  max-width:85%;
+  display:flex;
+  gap:8px;
 }
-.mine{
-  align-self:flex-end;
+.msg.mine{align-self:flex-end;flex-direction:row-reverse}
+.bubble{
+  padding:10px 14px;
+  border-radius:18px;
+  font-size:14px;
+}
+.mine .bubble{
   background:var(--lime);
   color:#000;
 }
-.others{
-  align-self:flex-start;
-  background:rgba(0,0,0,.6);
+.other .bubble{
+  background:rgba(255,255,255,.1);
 }
-.user{
-  font-size:9px;
-  font-weight:700;
+.avatar{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+}
+.name{
+  font-size:10px;
   color:var(--pink);
-  margin-bottom:4px;
-  display:block;
+  font-weight:600;
 }
 .time{
-  font-size:8px;
+  font-size:9px;
   opacity:.6;
   margin-top:4px;
 }
@@ -165,7 +191,6 @@ body{
   display:flex;
   gap:10px;
   padding:15px;
-  backdrop-filter:blur(6px);
 }
 #msgInput{
   flex:1;
@@ -174,28 +199,75 @@ body{
   border:none;
 }
 .send-btn{
-  width:45px;height:45px;
+  width:45px;
+  height:45px;
   border-radius:50%;
   border:none;
   background:var(--lime);
-  font-weight:700;
+}
+
+/* MUSIC MODAL */
+#musicModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+.music-card{
+  width:80%;
+  max-width:300px;
+  background:#000;
+  border:1px solid var(--lime);
+  border-radius:25px;
+  padding:20px;
+  text-align:center;
+}
+.song{
+  padding:10px;
+  border-radius:15px;
+  background:rgba(255,255,255,.05);
+  margin:6px 0;
+  cursor:pointer;
+}
+.song.active{
+  background:var(--lime);
+  color:#000;
 }
 </style>
 </head>
 
 <body>
 
-<audio id="bgMusic" loop src="https://j.top4top.io/m_3647bwc821.mp3"></audio>
+<video class="bg" autoplay muted loop>
+  <source src="video.mp4" type="video/mp4">
+</video>
+<div class="overlay"></div>
+
+<audio id="bgMusic" loop></audio>
+
+<!-- MUSIC -->
+<div id="musicModal">
+  <div class="music-card">
+    <div class="song" onclick="pickMusic('https://j.top4top.io/m_3647bwc821.mp3',this)">Losing Us</div>
+    <div class="song" onclick="pickMusic('https://c.top4top.io/m_3647td0he1.mp3',this)">Nembus Jantung</div>
+    <div class="song" onclick="pickMusic('https://a.top4top.io/m_3647jxzr81.m4a',this)">Multo Cikk</div>
+    <div class="song" onclick="toggleMusic()">[ CLOSE ]</div>
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div id="loginModal">
-  <div class="modal">
-    <h2 id="mode">LOGIN</h2>
+  <div class="login-card">
+    <h3 id="title">LOGIN</h3>
     <input id="username" placeholder="Username">
+    <input id="photo" placeholder="Photo URL (optional)">
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
-    <button onclick="authSubmit()">SUBMIT</button>
-    <div class="toggle" onclick="switchMode()">Switch Login / Register</div>
+    <button onclick="submitAuth()">SUBMIT</button>
+    <div class="switch" onclick="toggleMode()">Switch Login / Register</div>
   </div>
 </div>
 
@@ -204,12 +276,13 @@ body{
   <div class="header">
     <div class="header-title">SYSTEM.MAIN CHAT</div>
     <div class="profile">
-      <img id="avatar" src="https://i.ibb.co/7G4QY4f/user.png">
-      <div class="status" id="status">online</div>
+      <img id="avatar">
+      <div class="status" id="status">offline</div>
     </div>
     <div class="music-bar">
-      <button onclick="bgMusic.play()">PLAY</button>
-      <button onclick="bgMusic.pause()">OFF</button>
+      <button onclick="toggleMusic()">MUSIC</button>
+      <button onclick="playMusic()">PLAY</button>
+      <button onclick="stopMusic()">OFF</button>
     </div>
   </div>
 
@@ -226,36 +299,48 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebas
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
-  authDomain: "public-chat-ece29.firebaseapp.com",
-  databaseURL: "https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "public-chat-ece29",
-  storageBucket: "public-chat-ece29.firebasestorage.app",
-  messagingSenderId: "66709279866",
-  appId: "1:66709279866:web:9975c848443615310757c3"
+const firebaseConfig={
+  apiKey:"AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
+  authDomain:"public-chat-ece29.firebaseapp.com",
+  databaseURL:"https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"public-chat-ece29",
+  storageBucket:"public-chat-ece29.appspot.com",
+  messagingSenderId:"66709279866",
+  appId:"1:66709279866:web:9975c848443615310757c3"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const auth=getAuth(app);
 
 let isLogin=true,myName="",myPhoto="";
 
-window.switchMode=()=>{
-  isLogin=!isLogin;
-  mode.innerText=isLogin?"LOGIN":"REGISTER";
+/* MUSIC */
+const audio=document.getElementById("bgMusic");
+window.toggleMusic=()=>musicModal.style.display=musicModal.style.display==="flex"?"none":"flex";
+window.pickMusic=(u,e)=>{
+  audio.src=u;audio.play();
+  document.querySelectorAll(".song").forEach(s=>s.classList.remove("active"));
+  e.classList.add("active");
+  toggleMusic();
 }
+window.playMusic=()=>audio.play();
+window.stopMusic=()=>audio.pause();
 
-window.authSubmit=async()=>{
+/* AUTH */
+window.toggleMode=()=>{
+  isLogin=!isLogin;
+  title.innerText=isLogin?"LOGIN":"REGISTER";
+}
+window.submitAuth=async()=>{
   try{
     if(isLogin){
       await signInWithEmailAndPassword(auth,email.value,password.value);
     }else{
       const r=await createUserWithEmailAndPassword(auth,email.value,password.value);
       await updateProfile(r.user,{
-        displayName:username.value||"User-"+r.user.uid.slice(0,5),
-        photoURL:"https://i.ibb.co/7G4QY4f/user.png"
+        displayName:username.value,
+        photoURL:photo.value||"https://i.ibb.co/7G4QY4f/user.png"
       });
     }
   }catch(e){alert(e.message)}
@@ -266,26 +351,35 @@ onAuthStateChanged(auth,u=>{
     myName=u.displayName;
     myPhoto=u.photoURL;
     avatar.src=myPhoto;
+    status.innerText="online";
     loginModal.style.display="none";
   }
 });
 
+/* CHAT */
 window.sendMsg=e=>{
   e.preventDefault();
   if(!msgInput.value)return;
   push(ref(db,"messages"),{
     user:myName,
+    photo:myPhoto,
     text:msgInput.value,
-    time:new Date().toLocaleTimeString()
+    time:Date.now()
   });
   msgInput.value="";
-};
+}
 
 onChildAdded(ref(db,"messages"),s=>{
   const d=s.val();
   const div=document.createElement("div");
-  div.className="msg "+(d.user===myName?"mine":"others");
-  div.innerHTML=`<span class="user">${d.user}</span>${d.text}<div class="time">${d.time}</div>`;
+  div.className="msg "+(d.user===myName?"mine":"other");
+  div.innerHTML=`
+    <img class="avatar" src="${d.photo}">
+    <div>
+      <div class="name">${d.user}</div>
+      <div class="bubble">${d.text}</div>
+      <div class="time">${new Date(d.time).toLocaleTimeString()}</div>
+    </div>`;
   chatBox.appendChild(div);
   chatBox.scrollTop=chatBox.scrollHeight;
 });
