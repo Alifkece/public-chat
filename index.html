@@ -347,7 +347,6 @@ window.stopMusic=()=>audio.pause();
 
 /* ===== AUTH ===== */
 window.toggleMode=()=>{isLogin=!isLogin;title.innerText=isLogin?"LOGIN":"REGISTER";}
-
 window.submitAuth=async()=>{
   try{
     if(isLogin){
@@ -370,16 +369,18 @@ onAuthStateChanged(auth,u=>{
     status.innerText = "online";
     loginModal.style.display="none";
 
-    // load semua chat realtime
-    const chatRef = ref(db,"messages");
-    onChildAdded(chatRef, s=>{
-      const d=s.val();
-      const div=document.createElement("div");
-      div.className="msg "+(d.user===myName?"mine":"other");
-      div.innerHTML=`<img class="avatar" src="${d.photo}"><div><div class="name">${d.user}</div><div class="bubble">${d.text}</div><div class="time">${new Date(d.time).toLocaleTimeString()}</div></div>`;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
+    // chat listener aman
+    if(!window.chatListener){
+      window.chatListener = onChildAdded(ref(db,"messages"), s=>{
+        const d = s.val();
+        if(!myName) return;
+        const div = document.createElement("div");
+        div.className = "msg "+(d.user===myName?"mine":"other");
+        div.innerHTML = `<img class="avatar" src="${d.photo}"><div><div class="name">${d.user}</div><div class="bubble">${d.text}</div><div class="time">${new Date(d.time).toLocaleTimeString()}</div></div>`;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+    }
   }
 });
 
