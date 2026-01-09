@@ -3,119 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Chat System</title>
+<title>ChatPublic</title>
 
-<!-- FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-/* ================= ROOT ================= */
 :root{
   --lime:#32ff32;
-  --dark:#000;
-  --glass:rgba(255,255,255,.12);
+  --pink:#b6ff00;
+  --glass:rgba(255,255,255,.08);
+  --glass-heavy:rgba(0,0,0,.75);
+  --bg:#050505;
 }
-
-/* ================= RESET ================= */
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 body{
-  height:100vh;
-  font-family:'Poppins',sans-serif;
+  margin:0;height:100vh;
+  font-family:'Outfit',sans-serif;
   background:#000;
   color:#fff;
   display:flex;
-  align-items:center;
   justify-content:center;
-  overflow:hidden;
+  align-items:center;
 }
 
-/* ================= MUSIC ================= */
-audio{
-  display:none;
-}
-
-/* ================= LOGIN MODAL ================= */
+/* LOGIN */
 #loginModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.95);
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.9);
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   z-index:999;
 }
-
 .modal{
-  width:90%;
-  max-width:360px;
-  padding:30px;
+  width:90%;max-width:360px;
   background:#000;
+  border:1px solid var(--lime);
   border-radius:30px;
+  padding:30px;
   text-align:center;
 }
-
 .modal h2{
-  font-family:'Orbitron';
+  font-family:'Syncopate';
   color:var(--lime);
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
-
 .modal input{
   width:100%;
+  padding:14px;
   margin:8px 0;
-  padding:14px 18px;
-  border-radius:25px;
+  border-radius:20px;
   border:none;
-  outline:none;
 }
-
 .modal button{
   width:100%;
-  margin-top:10px;
   padding:14px;
-  border-radius:25px;
+  border-radius:20px;
   border:none;
   background:var(--lime);
   font-weight:700;
-  cursor:pointer;
+  margin-top:10px;
 }
-
-.switch{
+.toggle{
   margin-top:10px;
   font-size:12px;
-  color:var(--lime);
+  color:var(--pink);
   cursor:pointer;
 }
 
-/* ================= CHAT CONTAINER ================= */
-.chat{
+/* CHAT */
+.chat-container{
   width:95%;
   max-width:420px;
   height:92vh;
-  border-radius:40px;
-  background:#000;
+  background:var(--glass-heavy);
+  border-radius:45px;
   display:flex;
   flex-direction:column;
   overflow:hidden;
+  background-image:url('https://files.catbox.moe/ggndeb.jpg');
+  background-size:cover;
+  background-position:center;
 }
-
-/* ================= HEADER ================= */
 .header{
-  padding:20px;
+  padding:22px;
   text-align:center;
+  backdrop-filter:blur(6px);
 }
-
-.header h1{
-  font-family:'Orbitron';
+.header-title{
+  font-family:'Syncopate';
   font-size:.8rem;
   color:var(--lime);
 }
-
 .profile{
   display:flex;
   justify-content:center;
@@ -123,237 +102,191 @@ audio{
   gap:10px;
   margin-top:10px;
 }
-
 .profile img{
-  width:36px;
-  height:36px;
+  width:34px;height:34px;
   border-radius:50%;
   border:1px solid var(--lime);
 }
-
 .status{
   font-size:10px;
-  opacity:.7;
+  color:var(--pink);
 }
-
-/* ================= CHAT BOX ================= */
-#chatBox{
-  flex:1;
-  padding:15px;
-  overflow-y:auto;
-  background:
-    linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),
-    url("https://files.catbox.moe/ggndeb.jpg");
-  background-size:cover;
-  background-position:center;
+.music-bar{
+  margin-top:10px;
 }
-
-/* ================= MESSAGE ================= */
-.wrap{
-  display:flex;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.wrap.me{
-  flex-direction:row-reverse;
-}
-
-.bubble{
-  max-width:75%;
-  background:var(--glass);
-  padding:10px 14px;
-  border-radius:18px;
-}
-
-.me .bubble{
-  background:var(--lime);
-  color:#000;
-}
-
-.name{
-  font-size:9px;
-  font-weight:700;
+.music-bar button{
+  font-size:10px;
+  padding:6px 12px;
+  border-radius:20px;
+  border:1px solid var(--lime);
+  background:transparent;
   color:var(--lime);
 }
 
-.time{
+/* CHAT BOX */
+#chatBox{
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.msg{
+  max-width:80%;
+  padding:12px 16px;
+  border-radius:18px;
+  backdrop-filter:blur(4px);
+}
+.mine{
+  align-self:flex-end;
+  background:var(--lime);
+  color:#000;
+}
+.others{
+  align-self:flex-start;
+  background:rgba(0,0,0,.6);
+}
+.user{
   font-size:9px;
+  font-weight:700;
+  color:var(--pink);
+  margin-bottom:4px;
+  display:block;
+}
+.time{
+  font-size:8px;
   opacity:.6;
-  margin-top:3px;
+  margin-top:4px;
 }
 
-.avatar{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-}
-
-/* ================= INPUT ================= */
-.input{
+/* INPUT */
+.input-area{
   display:flex;
   gap:10px;
-  padding:12px;
-  background:#000;
+  padding:15px;
+  backdrop-filter:blur(6px);
 }
-
-#msg{
+#msgInput{
   flex:1;
   padding:12px 18px;
   border-radius:30px;
   border:none;
-  outline:none;
 }
-
-.send{
-  width:45px;
-  height:45px;
+.send-btn{
+  width:45px;height:45px;
   border-radius:50%;
   border:none;
   background:var(--lime);
-  cursor:pointer;
-}
-
-/* ================= SCROLL ================= */
-#chatBox::-webkit-scrollbar{
-  width:4px;
-}
-#chatBox::-webkit-scrollbar-thumb{
-  background:var(--lime);
-  border-radius:10px;
+  font-weight:700;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= MUSIC ================= -->
-<audio autoplay loop>
-  <source src="https://files.catbox.moe/1qzj8k.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgMusic" loop src="https://j.top4top.io/m_3647bwc821.mp3"></audio>
 
-<!-- ================= LOGIN ================= -->
+<!-- LOGIN -->
 <div id="loginModal">
   <div class="modal">
     <h2 id="mode">LOGIN</h2>
-    <input id="username" placeholder="Username (register)">
-    <input id="photo" placeholder="Photo URL">
+    <input id="username" placeholder="Username">
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
     <button onclick="authSubmit()">SUBMIT</button>
-    <div class="switch" onclick="switchMode()">Switch Login / Register</div>
+    <div class="toggle" onclick="switchMode()">Switch Login / Register</div>
   </div>
 </div>
 
-<!-- ================= CHAT ================= -->
-<div class="chat">
+<!-- CHAT -->
+<div class="chat-container">
   <div class="header">
-    <h1>PUBLIC CHAT SYSTEM</h1>
+    <div class="header-title">SYSTEM.MAIN CHAT</div>
     <div class="profile">
-      <img id="myAvatar">
-      <div class="status" id="myStatus">offline</div>
+      <img id="avatar" src="https://i.ibb.co/7G4QY4f/user.png">
+      <div class="status" id="status">online</div>
+    </div>
+    <div class="music-bar">
+      <button onclick="bgMusic.play()">PLAY</button>
+      <button onclick="bgMusic.pause()">OFF</button>
     </div>
   </div>
 
   <div id="chatBox"></div>
 
-  <form class="input" onsubmit="sendMsg(event)">
-    <input id="msg" placeholder="Type message...">
-    <button class="send">➤</button>
+  <form class="input-area" onsubmit="sendMsg(event)">
+    <input id="msgInput" placeholder="Type message...">
+    <button class="send-btn">➤</button>
   </form>
 </div>
 
-<!-- ================= FIREBASE ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendEmailVerification,
-  updateProfile,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-/* CONFIG */
-const firebaseConfig={
-  apiKey:"AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
-  authDomain:"public-chat-ece29.firebaseapp.com",
-  databaseURL:"https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"public-chat-ece29",
-  storageBucket:"public-chat-ece29.appspot.com",
-  messagingSenderId:"66709279866",
-  appId:"1:66709279866:web:9975c848443615310757c3"
+const firebaseConfig = {
+  apiKey: "AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
+  authDomain: "public-chat-ece29.firebaseapp.com",
+  databaseURL: "https://public-chat-ece29-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "public-chat-ece29",
+  storageBucket: "public-chat-ece29.firebasestorage.app",
+  messagingSenderId: "66709279866",
+  appId: "1:66709279866:web:9975c848443615310757c3"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
-const auth=getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-let login=true;
-let myName="",myPhoto="";
+let isLogin=true,myName="",myPhoto="";
 
-/* MODE */
 window.switchMode=()=>{
-  login=!login;
-  mode.innerText=login?"LOGIN":"REGISTER";
-};
+  isLogin=!isLogin;
+  mode.innerText=isLogin?"LOGIN":"REGISTER";
+}
 
-/* AUTH */
 window.authSubmit=async()=>{
   try{
-    if(login){
+    if(isLogin){
       await signInWithEmailAndPassword(auth,email.value,password.value);
     }else{
       const r=await createUserWithEmailAndPassword(auth,email.value,password.value);
       await updateProfile(r.user,{
-        displayName:username.value || "Guest",
-        photoURL:photo.value || "https://i.ibb.co/7G4QY4f/user.png"
+        displayName:username.value||"User-"+r.user.uid.slice(0,5),
+        photoURL:"https://i.ibb.co/7G4QY4f/user.png"
       });
-      await sendEmailVerification(r.user);
-      alert("Verifikasi email dulu");
     }
   }catch(e){alert(e.message)}
-};
+}
 
-/* STATE */
 onAuthStateChanged(auth,u=>{
-  if(u && u.emailVerified){
+  if(u){
     myName=u.displayName;
     myPhoto=u.photoURL;
-    myAvatar.src=myPhoto;
-    myStatus.innerText="online";
+    avatar.src=myPhoto;
     loginModal.style.display="none";
   }
 });
 
-/* SEND */
 window.sendMsg=e=>{
   e.preventDefault();
-  if(!msg.value)return;
+  if(!msgInput.value)return;
   push(ref(db,"messages"),{
     user:myName,
-    photo:myPhoto,
-    text:msg.value,
-    time:Date.now()
+    text:msgInput.value,
+    time:new Date().toLocaleTimeString()
   });
-  msg.value="";
+  msgInput.value="";
 };
 
-/* RENDER */
 onChildAdded(ref(db,"messages"),s=>{
   const d=s.val();
-  const w=document.createElement("div");
-  w.className="wrap "+(d.user===myName?"me":"");
-  w.innerHTML=`
-    <img class="avatar" src="${d.photo}">
-    <div class="bubble">
-      <div class="name">${d.user}</div>
-      ${d.text}
-      <div class="time">${new Date(d.time).toLocaleTimeString()}</div>
-    </div>`;
-  chatBox.appendChild(w);
+  const div=document.createElement("div");
+  div.className="msg "+(d.user===myName?"mine":"others");
+  div.innerHTML=`<span class="user">${d.user}</span>${d.text}<div class="time">${d.time}</div>`;
+  chatBox.appendChild(div);
   chatBox.scrollTop=chatBox.scrollHeight;
 });
 </script>
