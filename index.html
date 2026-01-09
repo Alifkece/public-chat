@@ -15,17 +15,14 @@
   --dark:rgba(0,0,0,.65);
 }
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  height:100vh;
+  margin:0;height:100vh;
   font-family:'Outfit',sans-serif;
-  background:#000;
-  color:#fff;
+  background:#000;color:#fff;
   overflow:hidden;
 }
 
-/* ===== VIDEO BG ===== */
+/* VIDEO BACKGROUND */
 video.bg{
   position:fixed;
   inset:0;
@@ -124,6 +121,7 @@ video.bg{
   height:36px;
   border-radius:50%;
   border:1px solid var(--lime);
+  background:#000;
 }
 .status{
   font-size:11px;
@@ -205,37 +203,6 @@ video.bg{
   border:none;
   background:var(--lime);
 }
-
-/* MUSIC MODAL */
-#musicModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-.music-card{
-  width:80%;
-  max-width:300px;
-  background:#000;
-  border:1px solid var(--lime);
-  border-radius:25px;
-  padding:20px;
-  text-align:center;
-}
-.song{
-  padding:10px;
-  border-radius:15px;
-  background:rgba(255,255,255,.05);
-  margin:6px 0;
-  cursor:pointer;
-}
-.song.active{
-  background:var(--lime);
-  color:#000;
-}
 </style>
 </head>
 
@@ -246,17 +213,8 @@ video.bg{
 </video>
 <div class="overlay"></div>
 
-<audio id="bgMusic" loop></audio>
-
 <!-- MUSIC -->
-<div id="musicModal">
-  <div class="music-card">
-    <div class="song" onclick="pickMusic('https://j.top4top.io/m_3647bwc821.mp3',this)">Losing Us</div>
-    <div class="song" onclick="pickMusic('https://c.top4top.io/m_3647td0he1.mp3',this)">Nembus Jantung</div>
-    <div class="song" onclick="pickMusic('https://a.top4top.io/m_3647jxzr81.m4a',this)">Multo Cikk</div>
-    <div class="song" onclick="toggleMusic()">[ CLOSE ]</div>
-  </div>
-</div>
+<audio id="bgMusic" loop></audio>
 
 <!-- LOGIN -->
 <div id="loginModal">
@@ -297,8 +255,15 @@ video.bg{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
+/* FIREBASE CONFIG */
 const firebaseConfig={
   apiKey:"AIzaSyBJKKjTR-Uw8sGVlhyMM7EvCpHz9x_QU5I",
   authDomain:"public-chat-ece29.firebaseapp.com",
@@ -313,50 +278,58 @@ const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 const auth=getAuth(app);
 
-let isLogin=true,myName="",myPhoto="";
+let isLogin=true, myName="", myPhoto="";
 
-/* MUSIC */
+/* MUSIC HANDLER */
 const audio=document.getElementById("bgMusic");
 window.toggleMusic=()=>musicModal.style.display=musicModal.style.display==="flex"?"none":"flex";
-window.pickMusic=(u,e)=>{
-  audio.src=u;audio.play();
+window.playMusic=()=>audio.play();
+window.stopMusic=()=>audio.pause();
+window.pickMusic=(url,e)=>{
+  audio.src=url;
+  audio.play();
   document.querySelectorAll(".song").forEach(s=>s.classList.remove("active"));
   e.classList.add("active");
   toggleMusic();
 }
-window.playMusic=()=>audio.play();
-window.stopMusic=()=>audio.pause();
 
-/* AUTH */
+/* AUTH SWITCH */
 window.toggleMode=()=>{
-  isLogin=!isLogin;
-  title.innerText=isLogin?"LOGIN":"REGISTER";
+  isLogin = !isLogin;
+  title.innerText = isLogin?"LOGIN":"REGISTER";
 }
+
+/* AUTH SUBMIT */
 window.submitAuth=async()=>{
   try{
     if(isLogin){
-      await signInWithEmailAndPassword(auth,email.value,password.value);
+      const res=await signInWithEmailAndPassword(auth,email.value,password.value);
+      // fallback kalau profile null
+      if(!res.user.displayName){
+        await updateProfile(res.user,{displayName:username.value||"User"}); 
+      }
     }else{
       const r=await createUserWithEmailAndPassword(auth,email.value,password.value);
       await updateProfile(r.user,{
-        displayName:username.value,
+        displayName:username.value||"User",
         photoURL:photo.value||"https://i.ibb.co/7G4QY4f/user.png"
       });
     }
   }catch(e){alert(e.message)}
 }
 
+/* ON AUTH STATE */
 onAuthStateChanged(auth,u=>{
   if(u){
-    myName=u.displayName;
-    myPhoto=u.photoURL;
+    myName = u.displayName || "User";
+    myPhoto = u.photoURL || "https://i.ibb.co/7G4QY4f/user.png";
     avatar.src=myPhoto;
     status.innerText="online";
     loginModal.style.display="none";
   }
-});
+})
 
-/* CHAT */
+/* CHAT SEND */
 window.sendMsg=e=>{
   e.preventDefault();
   if(!msgInput.value)return;
@@ -364,11 +337,12 @@ window.sendMsg=e=>{
     user:myName,
     photo:myPhoto,
     text:msgInput.value,
-    time:Date.now()
+    time:new Date().toLocaleTimeString()
   });
   msgInput.value="";
 }
 
+/* CHAT RENDER */
 onChildAdded(ref(db,"messages"),s=>{
   const d=s.val();
   const div=document.createElement("div");
@@ -378,7 +352,7 @@ onChildAdded(ref(db,"messages"),s=>{
     <div>
       <div class="name">${d.user}</div>
       <div class="bubble">${d.text}</div>
-      <div class="time">${new Date(d.time).toLocaleTimeString()}</div>
+      <div class="time">${d.time}</div>
     </div>`;
   chatBox.appendChild(div);
   chatBox.scrollTop=chatBox.scrollHeight;
